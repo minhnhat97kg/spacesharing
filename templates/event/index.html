@@ -1,0 +1,98 @@
+{% extends "app.html" %} {% block head %}
+<link href='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.css' rel='stylesheet' />
+<link href='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.css' rel='stylesheet' />
+<script src='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.js'></script>
+<link href='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.css' rel='stylesheet' />
+<script src='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.js'></script>
+{% endblock %} {% block content %}
+<div id="calendar"></div>
+<div id="calendarModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="modalBody" class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row" class="table-dark">ID</th>
+                            <td id="modalID" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-dark">Title</th>
+                            <td id="modalTitle" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-dark">Start</th>
+                            <td id="modalStart" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-dark">End</th>
+                            <td id="modalEnd" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <td colspan=2 id="modalDescription"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Hide</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+{% endblock %} {% block footer %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.1/tinycolor.min.js" integrity="sha256-loi+HIzG37ZU3Ch2Hdmnuz+UrPHOV+mg/iGoJM4CI18=" crossorigin="anonymous"></script>
+
+<script>
+    async function getDataEventAjax() {
+        let result = await $.ajax({
+            url: "{{ url('api-events') }}",
+            method: 'get',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            }
+        })
+        return result;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        getDataEventAjax().then(data => {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['dayGrid'],
+                defaultView: 'dayGridMonth',
+                eventLimit: true,
+                events: data.map(e => {
+                    let textColor = tinycolor(e.color).getBrightness() > 128 ? "black" : "white"
+                    return ({
+                        id: e.id,
+                        title: e.title,
+                        start: e.start_time,
+                        end: e.end_time,
+                        backgroundColor: e.color,
+                        textColor: textColor
+                    })
+                }),
+                eventClick: async function(info) {
+                    const data = await $.ajax({
+                        url: "/api/events/" + info.event.id,
+                        method: 'get'
+                    })
+                    $('#modalID').html(data.id);
+                    $('#modalTitle').html(data.title);
+                    $('#modalDescription').html(data.description);
+                    $('#modalStart').html(data.start_time);
+                    $('#modalEnd').html(data.end_time);
+                    $('#calendarModal').modal();
+                },
+            });
+            calendar.render();
+        });
+    });
+</script>
+{% endblock %}

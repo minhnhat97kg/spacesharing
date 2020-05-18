@@ -1,0 +1,7 @@
+.vscode/
+.env/
+env/
+events/
+sharespace/
+**/__pycache__/
+**/migrations

@@ -1,0 +1,88 @@
+{% extends "app.html" %} {% block action %}
+<form action="#" onsubmit="enterPress" class="d-none d-sm-inline-block form-inline m-auto m-md-auto my-2 my-md-0 mw-100 navbar-search">
+    <div class="input-group">
+        <input type="text" id="searchinput" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+            <button type="submit" id="searchbtn" class="btn btn-primary" type="button">
+          <i class="fas fa-search fa-sm"></i>
+        </button>
+        </div>
+    </div>
+</form>
+<button class="btn btn-success" data-toggle="modal" data-target="#newGroupModal">Create Group</button> {% endblock %} {% block content %}
+<div id="listgroup"></div>
+<div class="modal fade" id="newGroupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #62c98a;">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Create group</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+            </div>
+            <div class="modal-body text-gray-900">
+                <form action="" method="POST">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea rows=5 type="text" class="form-control" name="description"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} {% block footer %}
+<script>
+    function getData() {
+        $.ajax({
+            url: '{{ url("api-groups") }}',
+            method: 'get',
+            data: {
+                'name': $("#searchinput").val()
+            },
+        }).done((groups) => {
+            $("#listgroup").html(groups.map((group) => {
+                console.log(group);
+                return $(`
+                <div class="card border-left-primary shadow h-100 py-2 my-2">
+                  <a href='/groups/${group.id}/detail' class="stretched-link" style="text-decoration: none;">
+                      <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">${ group.admin_user.username}</div>
+                              <div class="h5 mb-0 font-weight-bold text-gray-800">${group.name}</div>
+                            </div>
+                        </div>
+                    </div>
+                  </a>    
+                </div>
+                `)
+            }));
+        })
+    };
+
+    function enterPress(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault(); // Ensure it is only this code that rusn
+            alert("Enter was pressed was presses");
+        }
+
+    }
+
+    $(document).ready(() => {
+        getData();
+        $("#searchbtn").on("click", () => {
+            getData()
+        });
+    });
+</script>
+{% endblock %}

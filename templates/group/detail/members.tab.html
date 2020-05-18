@@ -1,0 +1,78 @@
+{% if request.user == group.admin_user %}
+<button class="btn btn-success mt-3 shadow-sm" data-toggle="modal" data-target="#addMemberModal">Add member</button>
+{% endif %}
+<table class="table table-striped text-gray-900 text-lg mt-3">
+    <thead>
+        <tr class="shadow-sm">
+
+            <th scope="col">First name</th>
+            <th scope="col">Last name</th>
+            {% if request.user == group.admin_user %}
+            <th class='text-center' scope="col">Action</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+
+        {% for member in members%}
+        <tr>
+            <td>{{member.first_name|e}}</td>
+            <td>{{member.last_name|e}}</td>
+            <td class='text-center'>
+                {% if request.user == group.admin_user %}
+                {% if member != group.admin_user %}
+                <a href="{{ url('group-delete-member', args=[group.id, member.id]) }}">
+                <button class="btn btn-danger"><i class="fas fa-trash"></i>
+                </button>
+                </a>
+                {% endif %}
+                {% endif %}
+            </td>
+    
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="modal fade" id="addMemberModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #62c98a;">
+                <h5 class="modal-title text-white" id="exampleModalLabel">Add member</h5>
+                <button onclick="location.reload()" class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body text-gray-900">
+                    <div class="form-group">
+                        <label>List of user</label>
+                        <table class="form control table table-striped text-gray-900 text-lg">
+                            <thead>
+                                <tr>
+                                    <th scope="col">First name</th>
+                                    <th scope="col">Last name</th>
+                                    <th class='text-center' scope="col">Add</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for not_member in not_members%}
+                                <tr>
+                                    <td>{{not_member.first_name|e}}</td>
+                                    <td>{{not_member.last_name|e}}</td>
+                                    <td class='text-center'>
+                                        <form action="" id="{{not_member.id|e}}" onsubmit="addMemberAjax(event)">
+                                            <input type="hidden" name="id_group" value="{{group.id|e}}">
+                                            <input type="hidden" name="id_member" value="{{not_member.id|e}}">
+                                            <button class="btn btn-info"><i class="fas fa-plus"></i></button>
+                                        </form>
+                                       
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

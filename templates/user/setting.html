@@ -1,0 +1,34 @@
+<!-- user:fisrt_name, last_name,id,user_name,password -->
+{% extends "app.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-6 m-auto text-gray-900">
+        <div class="card ">
+            <div class="card-header bg-primary text-white text-center  ">
+                <h3 class="font-weight-bold">Accout Setting</h3> 
+            </div>
+            <div class="card-body">
+                <form action="" method="post" >
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                    <div class="form-group">
+                        <label for="first_name">First name</label>
+                        <input class="form-control" type="text" name="first_name" value={{request.user.first_name|e}}>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last name</label>
+                        <input class="form-control" type="text" name="last_name" value={{request.user.last_name|e}}>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_name">User name</label>
+                        <input readonly class="form-control" type="text" value={{request.user.username|e}}>
+                    </div>
+                    <div class="form-group text-center">
+                        <input class="btn btn-primary" type="submit" value="Confirm">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

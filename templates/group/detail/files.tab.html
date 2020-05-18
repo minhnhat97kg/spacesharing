@@ -1,0 +1,32 @@
+<div class="row">
+    <div class="col-10 mx-auto">
+        <form id="fileUploadForm" action="">
+            <div class="form-group">
+                <input type="file" id="BSbtnsuccess">
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% for file in files %}
+<div class="card shadow mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-xs font-weight-bold text text-uppercase mb-1">
+                        {{ file.time.strftime('%Y-%m-%d %H:%M') }} {{ file.uploader.user }}
+                    </div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-400">
+                        <a href="{{ file.file.url }}"><span>{{ file.file.name }}</span></a>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <img height='60px' width='60px' alt="Unknown" src="{{ static ( '/'.join(['img/ext-icons/png', file.get_file_extension() + '.png'])) }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}

@@ -1,0 +1,272 @@
+<!-- {group:{name,description,admin_user} , members:listmember,not_members} -->
+{% extends "app.html" %} {% block head %}
+<!-- 
+<link href="{{ static ('vendor/fullcalendar/core/main.css') }}" rel='stylesheet' />
+<link href="{{ static ('vendor/fullcalendar/timegrid/main.css') }}" rel='stylesheet' />
+<link href="{{ static ('vendor/fullcalendar/daygrid/main.css') }}" rel='stylesheet' />
+<link href="{{ static ('vendor/fullcalendar/bootstrap/main.css') }}" rel='stylesheet' />
+
+<script src="{{ static ('vendor/fullcalendar/core/main.js') }}"></script>
+<script src="{{ static ('vendor/fullcalendar/daygrid/main.js') }}"></script>
+<script src="{{ static ('vendor/fullcalendar/list/main.js') }}"></script>
+<script src="{{ static ('vendor/fullcalendar/timegrid/main.js') }}"></script>
+<script src="{{ static ('vendor/fullcalendar/interaction/main.js') }}"></script>
+<script src="{{ static ('vendor/fullcalendar/bootstrap/main.js') }}"></script> -->
+
+
+
+<link href='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.css' rel='stylesheet' />
+<link href='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.css' rel='stylesheet' />
+<script src='https://unpkg.com/@fullcalendar/core@4.3.1/main.min.js'></script>
+<script src='https://unpkg.com/@fullcalendar/list@4.3.0/main.min.js'></script>
+<link href='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.css' rel='stylesheet' />
+<script src='https://unpkg.com/@fullcalendar/daygrid@4.3.0/main.min.js'></script>
+<link rel="stylesheet" href="{{ static ('css/tab.css') }}"> {% endblock %} {% block content %}
+
+<ul class="nav nav-tabs text-center">
+    <li class="nav-item w-25 ">
+        <a class="nav-link active font-weight-bold text-info" data-toggle="tab" href="#home">Info</a>
+    </li>
+    <li class="nav-item w-25">
+        <a class="nav-link font-weight-bold text-warning" data-toggle="tab" href="#members">Members</a>
+    </li>
+    <li class="nav-item w-25">
+        <a class="nav-link font-weight-bold text-success" data-toggle="tab" href="#events">Events</a>
+    </li>
+    <li class="nav-item w-25">
+        <a class="nav-link font-weight-bold text-primary" data-toggle="tab" href="#files">Files</a>
+    </li>
+</ul>
+<!-- Tab panes -->
+<div class="tab-content">
+    <!-- Tab infor -->
+    <div id="home" class="container tab-pane active"><br> {% include 'group/detail/info.tab.html'%}
+        <!-- Endtab infor -->
+    </div>
+    <!-- Tab event -->
+    <div id="events" class="container tab-pane fade"><br> {% include 'group/detail/events.tab.html'%}
+        <!-- End tab event -->
+    </div>
+    <!-- Tab member -->
+    <div id="members" class="container tab-pane fade"><br> {% include 'group/detail/members.tab.html'%}
+        <!-- End tab member -->
+    </div>
+    <!-- Tab member -->
+    <div id="files" class="container tab-pane fade"><br> {% include 'group/detail/files.tab.html'%}
+        <!-- End tab member -->
+    </div>
+</div>
+
+{% endblock %} {% block footer %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.1/tinycolor.min.js"></script>
+<script type="text/javascript" src="{{ static ('js/bootstrap-filestyle.min.js') }}">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="{{ static ('js/colorpalettepicker.js') }}"></script>
+<script>
+    $('#colorPicker').colorPalettePicker({
+        lines: 4,
+        onSelected: function(color) {
+            $("#colorPickerValue").val(tinycolor(color).toHex());
+        }
+    });
+
+
+    $('#BSbtnsuccess').filestyle({
+        buttonName: 'btn-success',
+        buttonText: ' Open'
+    });
+    $('#BSbtnsuccess').on('input', function() {
+        // Create an FormData object 
+        var data = new FormData();
+
+        data.append('file', $(this)[0].files[0]);
+
+        $.ajax({
+            method: 'post',
+            url: "{{ url ('api-group-files', args=[group.id]) }}",
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            enctype: 'multipart/form-data',
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function(data) {
+                alert('Upload Success.');
+            }
+        }).done((file) => {
+            $("#files").append(
+                $(`
+            <div class="card shadow mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text text-uppercase mb-1">
+                                ${file.time} ${file.uploader.username}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-400">
+                                <a target="_blank" href="${file.file}"><span>${file.name}</span></a>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <img height='60px' width='60px' alt="Unknown" src="${"{{ static ('img/ext-icons/png') }}" + "/" + file.extension + ".png"}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+                `)
+            );
+        });
+    });
+
+    $(function() {
+        $('#datetimepicker7').datetimepicker({
+            icons: {
+                time: "fas fa-clock",
+                date: "fas fa-calendar",
+                up: "fas fa-arrow-up",
+                down: "fas fa-arrow-down"
+            },
+            format: 'YYYY-MM-DDThh:mm:ss'
+        });
+        $('#datetimepicker8').datetimepicker({
+            useCurrent: false,
+            icons: {
+                time: "fas fa-clock",
+                date: "fas fa-calendar",
+                up: "fas fa-arrow-up",
+                down: "fas fa-arrow-down"
+            },
+            format: 'YYYY-MM-DDThh:mm:ss'
+        });
+        $("#datetimepicker7").on("change.datetimepicker", function(e) {
+            $('#datetimepicker8').datetimepicker('minDate', e.date);
+        });
+        $("#datetimepicker8").on("change.datetimepicker", function(e) {
+            $('#datetimepicker7').datetimepicker('maxDate', e.date);
+        });
+    });
+
+    function addMemberAjax(e) {
+        e.preventDefault()
+        let id_member = $(e.target).find('input[name="id_member"]').val()
+        let id_group = $(e.target).find('input[name="id_group"]').val()
+        $.ajax({
+            url: "{{ url('api-group-members', args=[group.id]) }}",
+            method: 'post',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            data: {
+                member: id_member
+            }
+        }).done(() => {
+            location.reload();
+        }).fail(() => {
+            location.reload();
+        })
+    }
+
+    function newEventAjax(event) {
+        event.preventDefault()
+        const objectifyForm = (formArray) => {
+            var returnArray = {};
+            for (var i = 0; i < formArray.length; i++) {
+                returnArray[formArray[i]['name']] = formArray[i]['value'];
+            }
+            return returnArray;
+        }
+        let raw_data = $(event.target).serializeArray();
+        let data = objectifyForm(raw_data)
+        data.color = '#'+data.color;
+        $.ajax({
+            url: "{{ url('api-group-events',args=[group.id]) }}",
+            method: 'post',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            },
+            data: data
+        }).done((res) => {
+            console.log(res);
+            location.reload()
+        }).fail((error) => {
+            console.log(error)
+        })
+    }
+
+    async function getDataEventAjax() {
+        let result = await $.ajax({
+            url: "{{ url('api-group-events',args=[group.id])}}",
+            method: 'get',
+            headers: {
+                "X-CSRFToken": '{{ csrf_token }}'
+            }
+        })
+        return result;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        getDataEventAjax().then(data => {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['list', 'dayGrid'],
+                defaultView: 'list',
+                timeZone: 'UTC',
+                events: data.map(e => {
+                    console.log(e)
+                    return ({
+                        id: e.id,
+                        title: e.title,
+                        start: e.start_time,
+                        end: e.end_time,
+                        backgroundColor: e.color,
+                        textColor: "white"
+                    })
+                }),
+                views: {
+                    listDay: {
+                        buttonText: 'Day'
+                    },
+                    listWeek: {
+                        buttonText: 'Week'
+                    },
+                    listMonth: {
+                        buttonText: 'Month'
+                    }
+                },
+                header: {
+                    left: 'title',
+                    center: '',
+                    right: 'listDay,listWeek,listMonth'
+                },
+                eventClick: async function(info) {
+
+                    const data = await $.ajax({
+                        url: "/api/events/" + info.event.id,
+                        method: 'get'
+                    })
+                    $('#modalID').html(data.id);
+                    $('#modalTitle').html(data.title);
+                    $('#modalDescription').html(data.description);
+                    $('#modalStart').html(data.start_time);
+                    $('#modalEnd').html(data.end_time);
+                    $('#calendarModal').modal();
+                },
+
+            });
+
+
+            calendar.setOption('contentHeight', 500);
+            calendar.render();
+            // end promise ajax
+        });
+    });
+</script>
+
+{% endblock %}

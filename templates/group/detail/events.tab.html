@@ -1,0 +1,111 @@
+<div class="row">
+    <div class="col">
+        <button class="btn btn-success" data-toggle="modal" data-target="#newEventModal">New Event</button>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col mb-4 mt-1">
+        <div id="calendar">
+        </div>
+    </div>
+</div>
+<div id="calendarModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="modalBody" class="modal-body">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th scope="row" class="table-dark">ID</th>
+                            <td id="modalID" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-dark">Title</th>
+                            <td id="modalTitle" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-dark">Start</th>
+                            <td id="modalStart" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="table-dark">End</th>
+                            <td id="modalEnd" style="width: 70%"></td>
+                        </tr>
+                        <tr>
+                            <td colspan=2 id="modalDescription"></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <button type="button" class="btn btn-dark" data-dismiss="modal">Hide</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="newEventModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success  font-weight-bold">
+                <div class="modal-title text-center">
+                    <h3 class="font-weight-bold text-white " id="exampleModalLabel">NEW EVENT</h3>
+                </div>
+                <button class="close text-white" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body text-gray-900">
+                <form onsubmit="newEventAjax(event)" method="post">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" class="form-control" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea rows=5 type="text" class=" form-control" name="description"></textarea>
+                    </div>
+                    <div class="container">
+                        <div class='col'>
+                            <div class="form-group">
+                                <label>Start:</label>
+                                <div class="input-group date" id="datetimepicker7" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker7" name="start_time" />
+                                    <div class="input-group-append" data-target="#datetimepicker7" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col'>
+                            <div class="form-group">
+                                <label>End:</label>
+                                <div class="input-group date" id="datetimepicker8" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker8" name="end_time" />
+                                    <div class="input-group-append" data-target="#datetimepicker8" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label>Color</label>
+                            <div id="colorPicker"></div>
+                            <input id="colorPickerValue" type="hidden" name="color">
+                        </div>
+                    </div>
+                    <div class="form-group text-center mt-2">
+                        <button class="btn btn-success" type="submit"><i class="fas fa-plus"></i> Submit</button>
+                        <button class="btn btn-danger " type="button" data-dismiss="modal"><i class="fas fa-times"></i> Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

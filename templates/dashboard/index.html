@@ -1,0 +1,37 @@
+{% extends "app.html" %}
+
+
+{% block head %}
+<style>
+div #content{
+  background-image: url("{{ static ('img/background.jpg') }}");
+  background-size: 100%;
+}
+
+</style>
+{% endblock %}
+
+{% block action %}
+<div class="navbar-nav ml-auto">
+  <span class="mr-2 d-none d-lg-inline text-gray-700" style="font-weight: bold;">
+    Server Time:
+  </span>
+  <span id='server-time' class="mr-2 d-none d-lg-inline text-gray-700" style="font-weight: bold;">
+
+  </span>
+</div>
+{% endblock %}
+
+{% block footer %}
+<script>
+  $.ajax({
+    method: 'get',
+    url: "{{ url ('api-server-time') }}",
+    dataType: 'json',
+    success: function(result){
+      time = Date.parse(result.datetime);
+      $('#server-time').text(result.datetime);
+    }
+  });
+</script>
+{% endblock %}
